@@ -30,9 +30,51 @@ graph = {
     (400, 100): [(400, 200),(500,100)],
     (500, 100): [(400, 100)],
 }
+#win function
+def winner():
+    screen.fill((0,0,0))
+    font = pygame.font.SysFont("Arial", 25)
+    txt = font.render("You Win", True, (255,255,255))
+    text_rect = txt.get_rect(center= (300,300))
+    screen.blit(txt, text_rect)
+
+    while win:
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                
+        #gameDisplay.fill(white)
+        pygame.display.update()
+
+def loser():
+    screen.fill((0,0,0))
+    font = pygame.font.SysFont("Arial", 25)
+    txt = font.render("You Lose", True, (255,255,255))
+    text_rect = txt.get_rect(center= (300,300))
+    screen.blit(txt, text_rect)
+
+    while lose:
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                
+        #gameDisplay.fill(white)
+        pygame.display.update()
 
 #
 move = None
+
+win = False
+
+lose = False
+
+winner_position = (500,100)
+
+chaser_position = (100,100)
 
 player_position = (200,300)
 
@@ -100,6 +142,17 @@ while True:
     # Draw the current player position
     pos = player_position
     pygame.draw.circle(screen, (255, 0, 0), pos, 10)
+
+    pygame.draw.circle(screen,(0,255,0),chaser_position,10)
+
+    if player_position == winner_position:
+        win = True
+        winner()
+
+    if player_position == chaser_position:
+        lose = True
+        loser()
+
     print(player_position)
     pygame.display.flip()
     pygame.time.delay(500)
