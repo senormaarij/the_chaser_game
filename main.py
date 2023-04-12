@@ -30,6 +30,60 @@ graph = {
     (400, 100): [(400, 200),(500,100)],
     (500, 100): [(400, 100)],
 }
+
+def priority_dequeue(queue):
+  greatest  = 9999999
+  for i in range(len(queue)):
+    if queue[i][1] < greatest:
+      index = i
+  item = queue.pop(index)
+  return item
+
+def enqueue(queue,item):
+  queue.append(item)
+
+def getShortestPath(graph,src,end):
+  node_cost = {}
+  track_parents = {}
+  visited = {}
+  priority_q = []
+  infinity = 999999
+
+  for node in graph:
+    node_cost[node] = 999999 
+    track_parents[node] = None
+    visited[node] = False
+  
+  visited[src] = True
+  node_cost[src] = 0
+  priority_q.append((src,0))
+
+  while priority_q:
+    node_tuple = priority_dequeue(priority_q)
+    current_node = node_tuple[0]
+    weight_node = node_tuple[1]
+    visited[current_node] == True
+
+    for neighbour in graph[current_node]:
+      if visited[neighbour] == False:
+        new_cost = weight_node + 1
+        if new_cost < node_cost[neighbour]:
+          node_cost[neighbour] = new_cost
+          track_parents[neighbour] = current_node
+          enqueue(priority_q, (neighbour, new_cost))
+
+  
+  edges = []
+
+  current_node = end
+  while current_node != src:
+      parent_node = track_parents[current_node]
+      edges.append((parent_node, current_node))
+      current_node = parent_node
+
+  edges.reverse()
+  return edges
+
 #win function
 def winner():
     screen.fill((0,0,0))
@@ -66,6 +120,8 @@ def loser():
         pygame.display.update()
 
 #
+flag = False
+
 move = None
 
 win = False
@@ -116,12 +172,14 @@ while True:
         if (x, new_y) in adjacent_nodes:
             player_position  = (x, new_y)
             move = None
+            flag  = True
     if move == "down":
         x, y = player_position
         new_y = y + 100
         if (x, new_y) in adjacent_nodes:
             player_position  = (x, new_y)
             move = None
+            flag = True
         
     if move == "left":
         x, y = player_position
@@ -129,6 +187,7 @@ while True:
         if (new_x, y) in adjacent_nodes:
             player_position = (new_x, y) 
             move = None
+            flag = True 
 
     if move == "right":
         x, y = player_position
@@ -136,12 +195,21 @@ while True:
         if (new_x, y) in adjacent_nodes:
             player_position = (new_x, y) 
             move = None
+            flag = True
 
-    
+    if player_position == chaser_position:
+        lose = True
+        loser()
+
 
     # Draw the current player position
     pos = player_position
     pygame.draw.circle(screen, (255, 0, 0), pos, 10)
+
+    if flag:
+        path = getShortestPath(graph, chaser_position, player_position)
+        chaser_position = path[0][1]
+        flag = False
 
     pygame.draw.circle(screen,(0,255,0),chaser_position,10)
 
@@ -149,10 +217,7 @@ while True:
         win = True
         winner()
 
-    if player_position == chaser_position:
-        lose = True
-        loser()
-
+    
     print(player_position)
     pygame.display.flip()
     pygame.time.delay(500)
