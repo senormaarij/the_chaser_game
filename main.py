@@ -31,6 +31,7 @@ graph = {
     (500, 100): [(400, 100)],
 }
 
+#queue functions
 def priority_dequeue(queue):
   greatest  = 9999999
   for i in range(len(queue)):
@@ -42,6 +43,8 @@ def priority_dequeue(queue):
 def enqueue(queue,item):
   queue.append(item)
 
+
+#dijkstra algorithm
 def getShortestPath(graph,src,end):
   node_cost = {}
   track_parents = {}
@@ -98,10 +101,10 @@ def winner():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-                
-        #gameDisplay.fill(white)
+
         pygame.display.update()
 
+#lose function
 def loser():
     screen.fill((0,0,0))
     font = pygame.font.SysFont("Arial", 25)
@@ -116,10 +119,9 @@ def loser():
                 pygame.quit()
                 quit()
                 
-        #gameDisplay.fill(white)
         pygame.display.update()
 
-#
+
 flag = False
 
 move = None
@@ -134,7 +136,7 @@ chaser_position = (100,100)
 
 player_position = (200,300)
 
-
+#main loop
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -165,7 +167,8 @@ while True:
     
     # Get the adjacent nodes for the current player position
     adjacent_nodes = graph[player_position]
-   
+    
+    #player traversal
     if move == 'up':
         x, y = player_position
         new_y = y - 100
@@ -197,6 +200,7 @@ while True:
             move = None
             flag = True
 
+    #checks if player has loss
     if player_position == chaser_position:
         lose = True
         loser()
@@ -206,19 +210,22 @@ while True:
     pos = player_position
     pygame.draw.circle(screen, (255, 0, 0), pos, 10)
 
+    #obtain a path to player and update chaser_position
     if flag:
         path = getShortestPath(graph, chaser_position, player_position)
         chaser_position = path[0][1]
         flag = False
 
+    #draw chaser
     pygame.draw.circle(screen,(0,255,0),chaser_position,10)
 
+    #checks if the player has won
     if player_position == winner_position:
         win = True
         winner()
 
     
-    print(player_position)
+    #print(player_position)
     pygame.display.flip()
     pygame.time.delay(500)
 
