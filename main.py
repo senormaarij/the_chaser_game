@@ -13,7 +13,7 @@ graph = {
     (100, 200): [(100, 300), (100, 100)],
     (200, 200): [(300, 200), (200, 100),(200,300)],
     (300, 200): [(300, 100),(200,200)],
-    (100, 100): [(100, 300), (200, 100),(100,200)],
+    (100, 100): [(200, 100),(100,200)],
     (200, 100): [(200, 200), (100, 100)],
     (300, 100): [(300, 200)],
     (200, 400): [(200, 300), (300, 400),(200,500)],
@@ -200,7 +200,7 @@ while True:
             move = None
             flag = True
 
-    #checks if player has loss
+    #checks if player has lost
     if player_position == chaser_position:
         lose = True
         loser()
@@ -214,6 +214,7 @@ while True:
     if flag:
         path = getShortestPath(graph, chaser_position, player_position)
         chaser_position = path[0][1]
+        print(path)
         flag = False
 
     #draw chaser
