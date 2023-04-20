@@ -6,6 +6,8 @@ pygame.init()
 
 screen = pygame.display.set_mode((600, 600))
 
+
+
 graph = {
     (200, 300): [(300, 300), (100, 300), (200, 200), (200, 400)],
     (300, 300): [(200, 300)],
@@ -18,7 +20,7 @@ graph = {
     (300, 100): [(300, 200)],
     (200, 400): [(200, 300), (300, 400),(200,500)],
     (300, 400): [(200, 400), (400, 400), (300, 500)],
-    (300, 500): [(300, 400), (400, 500),],
+    (300, 500): [(300, 400), (400, 500),(200,500)],
     (400, 400): [(300, 400), (400, 500),(500,400),(400,300)],
     (400, 500): [(400, 400), (300, 500),(500,500)],
     (400, 300): [(400, 400),(400,200)], 
@@ -30,6 +32,25 @@ graph = {
     (400, 100): [(400, 200),(500,100)],
     (500, 100): [(400, 100)],
 }
+
+graph2 = {
+    (100,100):[(100,200),(200,100)],
+    (100,200):[(100,100),(100,300)],
+    (200,100):[(100,100)],
+    (100,300):[(100,200)]
+
+}
+
+level_dict = {1:graph,2:graph2}
+
+
+def draw_level(level):
+    graph = level_dict[level]
+    screen.fill((0, 0, 0))
+    for node, data in graph.items():
+                pygame.draw.circle(screen, (255, 255, 255), node, 20)
+                for neighbor in graph[node]:
+                    pygame.draw.line(screen, (255, 255, 255), node, neighbor,20)
 
 #queue functions
 def priority_dequeue(queue):
@@ -111,16 +132,13 @@ def lose_screen():
 def start_menu():
     screen.fill((0, 0, 0))
     font = pygame.font.SysFont('arial', 40)
-    title = font.render('My Game', True, (255, 255, 255))
-    start_button = font.render('Start', True, (255, 255, 255))
+    title = font.render('Chaser Game', True, (255, 255, 255))
+    start_button = font.render('Press "space" to start', True, (255, 255, 255))
     screen.blit(title, (600/2 - title.get_width()/2, 600/2 - title.get_height()/2))
     screen.blit(start_button, (600/2 - start_button.get_width()/2, 600/2 + start_button.get_height()/2))
     pygame.display.update()
 
-
-
 game_state = "start_menu"
-
 
 
 
@@ -152,20 +170,17 @@ while True:
             chaser_position = (100,100)
             flag = False
             move = None
+            level = 1
             game_state = "game"
     if game_state == 'game':
-        # Redraw the screen to erase previous drawings
-        screen.fill((0, 0, 0))
-
         # Draw the nodes
-        for node, data in graph.items():
-            pygame.draw.circle(screen, (255, 255, 255), node, 20)
-            for neighbor in graph[node]:
-                pygame.draw.line(screen, (255, 255, 255), node, neighbor)
-        
+        draw_level(level)
+
         # Get the adjacent nodes for the current player position
-        adjacent_nodes = graph[player_position]
         
+        adjacent_nodes = level_dict[level][player_position]
+
+
         #player traversal
         if move == 'up':
             x, y = player_position
@@ -223,6 +238,8 @@ while True:
 
         if player_position == winner_position:
             game_state = "winner"
+            level += 1
+            print(level)
 
         pygame.display.flip()
         
@@ -236,11 +253,20 @@ while True:
             sys.exit()
 
     elif game_state == "winner":
-        win_screen()
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_r]:
-            game_state = "start_menu"
-        if keys[pygame.K_q]:
-            pygame.quit()
-            sys.exit()
+        if level <= 2:
+            player_position = (100,100)
+            winner_position = (200,100)
+            chaser_position = (100,200)
+            flag = False
+            move = None
+            game_state = "game"
+        
+        elif level > 2:
+            win_screen()
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_r]:
+                game_state = "start_menu"
+            if keys[pygame.K_q]:
+                pygame.quit()
+                sys.exit()
    
