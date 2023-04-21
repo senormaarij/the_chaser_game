@@ -7,7 +7,7 @@ pygame.init()
 screen = pygame.display.set_mode((600, 600))
 
 
-
+#level 1 graph
 graph = {
     (200, 300): [(300, 300), (100, 300), (200, 200), (200, 400)],
     (300, 300): [(200, 300)],
@@ -33,6 +33,7 @@ graph = {
     (500, 100): [(400, 100)],
 }
 
+#level 2 graph
 graph2 = {
     (100,100):[(100,200),(200,100)],
     (100,200):[(100,100),(100,300)],
@@ -41,11 +42,13 @@ graph2 = {
 
 }
 
-level_dict = {1:graph,2:graph2}
+level_maps = {1:graph,2:graph2}
+
+level_positions = {1:[(300,500),(500,100),(100,100)],2:[(),(),()]}
 
 
 def draw_level(level):
-    graph = level_dict[level]
+    graph = level_maps[level]
     screen.fill((0, 0, 0))
     for node, data in graph.items():
                 pygame.draw.circle(screen, (255, 255, 255), node, 20)
@@ -140,6 +143,7 @@ def start_menu():
 
 game_state = "start_menu"
 
+max_level = 1
 
 
 #main loop
@@ -165,21 +169,19 @@ while True:
         start_menu()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
-            player_position = (300,500)
-            winner_position = (500,100)
-            chaser_position = (100,100)
+            level = 1
+            player_position = level_positions[level][0]
+            winner_position = level_positions[level][1]
+            chaser_position = level_positions[level][2]
             flag = False
             move = None
-            level = 1
             game_state = "game"
     if game_state == 'game':
         # Draw the nodes
         draw_level(level)
 
         # Get the adjacent nodes for the current player position
-        
-        adjacent_nodes = level_dict[level][player_position]
-
+        adjacent_nodes = level_maps[level][player_position]
 
         #player traversal
         if move == 'up':
@@ -214,7 +216,6 @@ while True:
                 flag = True
 
     
-
         # Draw the current player position
         pos = player_position
         pygame.draw.circle(screen, (255, 255, 0), pos, 10)
@@ -253,15 +254,14 @@ while True:
             sys.exit()
 
     elif game_state == "winner":
-        if level <= 2:
-            player_position = (100,100)
-            winner_position = (200,100)
-            chaser_position = (100,200)
+        if level <= max_level:
+            player_position = level_positions[level][0]
+            winner_position = level_positions[level][1]
+            chaser_position = level_positions[level][2]
             flag = False
             move = None
             game_state = "game"
-        
-        elif level > 2:
+        elif level > max_level:
             win_screen()
             keys = pygame.key.get_pressed()
             if keys[pygame.K_r]:
