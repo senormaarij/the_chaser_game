@@ -45,17 +45,17 @@ graph2 = {
 
 level_maps = {1:graph,2:graph2}
 
-level_positions = {1:[(300,500),(300,100),(100,100)],2:[(),(),()]}
+level_positions = {1:[(300,500),(300,100),(200,400)],2:[(),(),()]}
 
 
 def draw_level(level):
     graph = level_maps[level]
     screen.fill((0, 0, 0))
     for node, data in graph.items():
-                pygame.draw.circle(screen, (255, 255, 255), node, 20)
+                pygame.draw.circle(screen, (255, 255, 255), node, 15)
                 for neighbor in graph[node]:
-                    pygame.draw.line(screen, (255, 255, 255), node, neighbor,20)
-    pygame.draw.circle(screen, (0, 255, 0), level_positions[level][1], 15 )
+                    pygame.draw.line(screen, (255, 255, 255), node, neighbor,15)
+    pygame.draw.circle(screen, (0, 255, 0), level_positions[level][1], 10 )
 #queue functions
 def priority_dequeue(queue):
   greatest  = 9999999
@@ -117,7 +117,7 @@ def getShortestPath(graph,src,end):
 #win_screen screen
 def win_screen():
     screen.fill((0,0,0))
-    font = pygame.font.SysFont("Arial", 25)
+    font = pygame.font.SysFont("Arial", 50)
     txt = font.render("You Win", True, (255,255,255))
     text_rect = txt.get_rect(center= (300,300))
     screen.blit(txt, text_rect)
@@ -126,8 +126,8 @@ def win_screen():
 #game_over screen
 def lose_screen():
     screen.fill((0,0,0))
-    font = pygame.font.SysFont("Arial", 25)
-    txt = font.render("You Lose", True, (255,255,255))
+    font = pygame.font.SysFont("Arial", 50)
+    txt = font.render("Game Over", True, (255,255,255))
     text_rect = txt.get_rect(center= (300,300))
     screen.blit(txt, text_rect)
     pygame.display.update()
@@ -135,7 +135,7 @@ def lose_screen():
 #start_menu screen
 def start_menu():
     screen.fill((0, 0, 0))
-    font = pygame.font.SysFont('arial', 40)
+    font = pygame.font.SysFont('arial', 50)
     title = font.render('Chaser Game', True, (255, 255, 255))
     start_button = font.render('Press "space" to start', True, (255, 255, 255))
     screen.blit(title, (600/2 - title.get_width()/2, 600/2 - title.get_height()/2))
@@ -241,7 +241,8 @@ while True:
         if player_position == winner_position:
             game_state = "winner"
             level += 1
-            print(level)
+
+
 
         pygame.display.flip()
         
