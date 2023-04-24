@@ -10,7 +10,7 @@ screen = pygame.display.set_mode((600, 600))
 #level 1 graph
 graph = {
     (200, 300): [(300, 300), (100, 300), (200, 200), (200, 400)],
-    (300, 300): [(200, 300)],
+    (300, 300): [(200, 300),(400,300)],
     (100, 300): [(200, 300), (100, 200)],
     (100, 200): [(100, 300), (100, 100)],
     (200, 200): [(300, 200), (200, 100),(200,300)],
@@ -23,7 +23,7 @@ graph = {
     (300, 500): [(300, 400), (400, 500),(200,500)],
     (400, 400): [(300, 400), (400, 500),(500,400),(400,300)],
     (400, 500): [(400, 400), (300, 500),(500,500)],
-    (400, 300): [(400, 400),(400,200)], 
+    (400, 300): [(400, 400),(400,200),(300,300)], 
     (200, 500): [(200, 400), (300, 500)],
     (400, 200): [(400, 300),(400,100),(500,200)],
     (500, 300): [(500,400),(500,200)],
@@ -34,18 +34,10 @@ graph = {
     (500, 200): [(500,300),(500,100),(400,200)]
 }
 
-#level 2 graph
-graph2 = {
-    (100,100):[(100,200),(200,100)],
-    (100,200):[(100,100),(100,300)],
-    (200,100):[(100,100)],
-    (100,300):[(100,200)]
 
-}
+level_maps = {1:graph}
 
-level_maps = {1:graph,2:graph2}
-
-level_positions = {1:[(300,500),(300,100),(200,400)],2:[(),(),()]}
+level_positions = {1:[(500,500),(300,100),(200,200)]}
 
 
 def draw_level(level):
@@ -56,6 +48,43 @@ def draw_level(level):
                 for neighbor in graph[node]:
                     pygame.draw.line(screen, (255, 255, 255), node, neighbor,15)
     pygame.draw.circle(screen, (0, 255, 0), level_positions[level][1], 10 )
+
+def chaser_sees(player_pos, chaser_pos):
+    x1, y1 = player_pos
+    x2, y2 = chaser_pos
+    if x1 == x2:
+        if y1 > y2:
+            for y in range(y2//100,y1//100):
+                nodes = level_maps[level][(x1,y2)]
+                if (x1,y2+100) not in nodes:
+                    return False
+                y2 = y2 + 100
+            return True
+        if y2 > y1:
+            for y in range(y1//100,y2//100):
+                nodes = level_maps[level][(x1,y1)]
+                if (x1,y1+100) not in nodes:
+                    return False
+                y1 = y1 + 100 
+            return True
+    if y1 == y2:
+        if x1 > x2:
+            for y in range(x2//100,x1//100):
+                nodes = level_maps[level][(x2,y1)]
+                if (x2+100,y1) not in nodes:
+                    return False
+                x2 = x2 + 100
+            return True
+        if x2 > x1:
+            for y in range(y1//100,y2//100):
+                nodes = level_maps[level][(x1,y1)]
+                if (x1+100,y1) not in nodes:
+                    return False
+                x1 = x1 + 100 
+            return True
+    return False
+            
+
 #queue functions
 def priority_dequeue(queue):
   greatest  = 9999999
@@ -178,6 +207,7 @@ while True:
             move = None
             game_state = "game"
     if game_state == 'game':
+
         # Draw the nodes
         draw_level(level)
 
@@ -198,8 +228,7 @@ while True:
             if (x, new_y) in adjacent_nodes:
                 player_position  = (x, new_y)
                 move = None
-                flag = True
-            
+                flag = True    
         if move == "left":
             x, y = player_position
             new_x = x - 100
@@ -207,7 +236,6 @@ while True:
                 player_position = (new_x, y) 
                 move = None
                 flag = True 
-
         if move == "right":
             x, y = player_position
             new_x = x + 100
@@ -221,6 +249,9 @@ while True:
         pos = player_position
         pygame.draw.circle(screen, (255, 255, 0), pos, 10)
 
+        #log whether chaser sees the player
+        print(chaser_sees(player_position, chaser_position))
+
         #checks if player has lost
         if player_position == chaser_position:
             game_state = "game_over"
@@ -232,17 +263,17 @@ while True:
             if path == -1:
                 game_state = "game_over"
             else:
+                
                 chaser_position = path[0][1]
                 flag = False
 
         #draw chaser
         pygame.draw.circle(screen,(255,0,0),chaser_position,10)
+        
 
         if player_position == winner_position:
             game_state = "winner"
             level += 1
-
-
 
         pygame.display.flip()
         
