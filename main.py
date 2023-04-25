@@ -42,13 +42,15 @@ level_positions = {1:[(500,500),(300,100),(200,200)]}
 
 def draw_level(level):
     graph = level_maps[level]
-    screen.fill((0, 0, 0))
+    screen.fill((25,0,51))
+    pygame.draw.rect(screen,(102,102,255),pygame.Rect(50, 50, 500, 500), width=10)
     for node, data in graph.items():
-                pygame.draw.circle(screen, (255, 255, 255), node, 15)
+                pygame.draw.circle(screen, (102,102,255), node, 15)
                 for neighbor in graph[node]:
-                    pygame.draw.line(screen, (255, 255, 255), node, neighbor,15)
-    pygame.draw.circle(screen, (0, 255, 0), level_positions[level][1], 10 )
+                    pygame.draw.line(screen, (102,102,255), node, neighbor,15)
+    pygame.draw.circle(screen, (200, 200, 200), level_positions[level][1], 10 )
 
+#wheter chaser can see the player 
 def chaser_sees(player_pos, chaser_pos):
     x1, y1 = player_pos
     x2, y2 = chaser_pos
@@ -84,7 +86,6 @@ def chaser_sees(player_pos, chaser_pos):
             return True
     return False
             
-
 #queue functions
 def priority_dequeue(queue):
   greatest  = 9999999
@@ -145,8 +146,8 @@ def getShortestPath(graph,src,end):
 
 #win_screen screen
 def win_screen():
-    screen.fill((0,0,0))
-    font = pygame.font.SysFont("Arial", 50)
+    screen.fill((25,0,51))
+    font = pygame.font.SysFont("OCR-A Extended", 50)
     txt = font.render("You Win", True, (255,255,255))
     text_rect = txt.get_rect(center= (300,300))
     screen.blit(txt, text_rect)
@@ -154,22 +155,30 @@ def win_screen():
 
 #game_over screen
 def lose_screen():
-    screen.fill((0,0,0))
-    font = pygame.font.SysFont("Arial", 50)
-    txt = font.render("Game Over", True, (255,255,255))
+    screen.fill((25,0,51))
+    font = pygame.font.SysFont("OCR-A Extended", 50)
+    txt = font.render("Game Over", True, (240,240,240))
     text_rect = txt.get_rect(center= (300,300))
     screen.blit(txt, text_rect)
     pygame.display.update()
 
 #start_menu screen
 def start_menu():
-    screen.fill((0, 0, 0))
-    font = pygame.font.SysFont('arial', 50)
-    title = font.render('Chaser Game', True, (255, 255, 255))
-    start_button = font.render('Press "space" to start', True, (255, 255, 255))
-    screen.blit(title, (600/2 - title.get_width()/2, 600/2 - title.get_height()/2))
-    screen.blit(start_button, (600/2 - start_button.get_width()/2, 600/2 + start_button.get_height()/2))
+    screen.fill((25,0,51))
+    pygame.draw.rect(screen,(41, 13, 50),pygame.Rect(100, 200, 400, 100), width=0)
+    font = pygame.font.SysFont('OCR-A Extended', 50)
+    font2 = pygame.font.SysFont('OCR-A Extended', 30)
+    title = font.render('Chaser Game', True, (240, 240, 240))
+    start_button = font2.render('Press "space" to start', True, (240, 240, 240))
+    title_rect = title.get_rect(center= (300,250))
+    start_rect = start_button.get_rect(center = (300,500))
+    screen.blit(title, title_rect)
+    screen.blit(start_button, start_rect)
     pygame.display.update()
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_q]:
+        pygame.quit()
+        sys.exit()
 
 game_state = "start_menu"
 
@@ -195,6 +204,7 @@ while True:
             if event.key == pygame.K_DOWN or event.key == ord('s'):
                 print("down")
                 move = 'down'
+    #start menu
     if game_state == 'start_menu':
         start_menu()
         keys = pygame.key.get_pressed()
@@ -206,6 +216,7 @@ while True:
             flag = False
             move = None
             game_state = "game"
+    #main game 
     if game_state == 'game':
 
         # Draw the nodes
@@ -276,7 +287,8 @@ while True:
             level += 1
 
         pygame.display.flip()
-        
+
+    #game over   
     elif game_state == "game_over":
         lose_screen()
         keys = pygame.key.get_pressed()
@@ -286,6 +298,7 @@ while True:
             pygame.quit()
             sys.exit()
 
+    #winner
     elif game_state == "winner":
         if level <= max_level:
             player_position = level_positions[level][0]
