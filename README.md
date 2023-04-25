@@ -1,7 +1,7 @@
 # Chaser Game
 (DSA_Project_2023)
 
-In this project we have implemented a graphing system with the help of pygame library to visualise it for a fun little game design. The concept of the game is that the player has to reach an end goal by chosing turns i.e up, down ,left or right(the player can not move diagnolly). The challenge arises as the player somehow needs to go past the chaser(red dot) which is guarding the winning point. The chaser follows a dijkstra's algorithm to find the shortest path to the player and takes one step whenever the player decides to move.
+In this project we have implemented a graphing system, with the help of "pygame" library to visualise it, for a fun little game design. The concept of the game is that the player has to reach an end goal by chosing turns i.e up, down, left or right(the player can not move diagnolly). The challenge arises as the player somehow needs to go past the chaser(red dot) which is guarding the winning point. The chaser uses the dijkstra's algorithm to find the shortest path to the player and takes one step whenever the player decides to move.
 
 Version 1.0:
 
